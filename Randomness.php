@@ -1,6 +1,7 @@
 <?php
 
-class Randomness {
+class Randomness
+{
 
 	/**
 	 * Platform independent strlen()
@@ -14,7 +15,8 @@ class Randomness {
 	 * @param $string
 	 * @return int
 	 */
-	public static function strlen($string) {
+	public static function strlen($string)
+	{
 		return function_exists('mb_strlen')
 			? mb_strlen($string, 'ISO-8859-1')
 			: strlen($string);
@@ -31,7 +33,8 @@ class Randomness {
 	 * @param int $length
 	 * @return string
 	 */
-	public static function substr($string, $start = 0, $length = null) {
+	public static function substr($string, $start = 0, $length = null)
+	{
 		if (func_num_args() < 3)
 			$length = self::strlen($string);
 		return function_exists('mb_substr')
@@ -39,8 +42,10 @@ class Randomness {
 			: substr($string, $start, $length);
 	}
 
-	public static function warn($msg) {
-		if (class_exists('Yii'))
+	public static function warn($msg)
+	{
+		if (class_exists('Yii')
+		)
 			/** @noinspection PhpUndefinedClassInspection */
 			Yii::log($msg, 'warning', 'security');
 		else
@@ -56,7 +61,8 @@ class Randomness {
 	 * @param bool $warn set to log a warning when the function is called
 	 * @return string of 64 pseudo random bytes
 	 */
-	public static function pseudoRanBlock($warn = true) {
+	public static function pseudoRanBlock($warn = true)
+	{
 		if ($warn)
 			self::warn('Using ' . get_class() . '::pseudoRanBlock non-ctypto_strong bytes');
 
@@ -95,7 +101,8 @@ class Randomness {
 	 *
 	 * @return string 20-byte random binary string or false on error
 	 */
-	public static function sessionBlock() {
+	public static function sessionBlock()
+	{
 		// session.entropy_length must be set for session_id be crypto-strong
 		ini_set('session.entropy_length', 20);
 		if (ini_get('session.entropy_length') != 20)
@@ -123,7 +130,8 @@ class Randomness {
 	 * @param bool $http Set to use the http://www.random.org service
 	 * @return string|bool The random binary string or false on failure
 	 */
-	public static function randomBytes($length = 8, $cryptoStrong = true, $http = false) {
+	public static function randomBytes($length = 8, $cryptoStrong = true, $http = false)
+	{
 		/**
 		 * @var string The string of random bytes to return
 		 */
@@ -197,7 +205,8 @@ class Randomness {
 	 * @param bool $cryptoStrong set to require crytoStrong randomness
 	 * @return string salt starting $2a$
 	 */
-	public static function blowfishSalt($cost = 10, $cryptoStrong = true) {
+	public static function blowfishSalt($cost = 10, $cryptoStrong = true)
+	{
 		return '$2a$'
 			. str_pad($cost, 2, '0', STR_PAD_RIGHT) . '$'
 			. strtr(substr(base64_encode(self::randomBytes(18, $cryptoStrong)), 0, 24), '+', '.');
@@ -212,7 +221,8 @@ class Randomness {
 	 * @param bool $cryptoStrong set to require crytoStrong randomness
 	 * @return string the random string
 	 */
-	public static function randomString($length = 8, $cryptoStrong = true) {
+	public static function randomString($length = 8, $cryptoStrong = true)
+	{
 		return strtr(
 			self::substr(
 				base64_encode(self::randomBytes($length + 2, $cryptoStrong)), 0, $length
@@ -224,7 +234,8 @@ class Randomness {
 	public static $dict;
 	public static $dictLen;
 
-	public static function initDict() {
+	public static function initDict()
+	{
 		if (self::$dict === null) {
 			self::$dict = require 'words.php';
 			self::$dictLen = count(self::$dict);
@@ -245,6 +256,7 @@ class Randomness {
 	 * @param int $maxWordLen Max length of each word
 	 * @param int $nSpecials Number of non-alphanumeric ascii chars to add
 	 * @param int $nDigits Number of digit chars to add
+	 * @param int $minPhraseLen Minimum number of ascii chars in phrase
 	 * @param bool $cryptoStrong Set to use a cryptographically-strong random generator
 	 * @return string The random pass phrase
 	 */
@@ -253,8 +265,13 @@ class Randomness {
 		$maxWordLen = 10,
 		$nSpecials = 1,
 		$nDigits = 1,
-		$cryptoStrong = false
+		$minPhraseLen = 14,
+		$cryptoStrong = true
 	) {
+		$minAlphas = $minPhraseLen - $nDigits - $nSpecials;
+		if ($maxWordLen * $length < $minAlphas)
+			$maxWordLen = ceil(($minAlphas) / $length);
+		$minWordLen = 3;
 		self::initDict();
 		$words = array();
 		do {
@@ -267,11 +284,26 @@ class Randomness {
 				$n = end(unpack('L', $y . chr(0))) & 0x3ffff;
 
 				// Discard numbers > doctionary size and words longer than the max word length
-				if ($n < self::$dictLen && strlen(self::$dict[$n]) <= $maxWordLen)
-					$words[] = ucwords(strtolower(self::$dict[$n]));
-
-				if (count($words) >= $length)
-					break 2;
+				if ($n < self::$dictLen
+					&& strlen($word = self::$dict[$n]) <= $maxWordLen
+					&& strlen($word) >= $minWordLen
+				) {
+					$words[] = ucwords(strtolower($word));
+					if (count($words) >= $length) {
+						if (strlen(implode('', $words)) < $minAlphas) {
+							$l = PHP_INT_MAX;
+							$k = false;
+							foreach ($words as $j => $word)
+								if (strlen($word) < $l) {
+									$l = strlen($word);
+									$k = $j;
+								}
+							unset($words[$k]);
+							$minWordLen = min($maxWordLen, $minAlphas - strlen(implode('', $words)));
+						} else
+							break 2;
+					}
+				}
 			}
 		} while (true);
 
