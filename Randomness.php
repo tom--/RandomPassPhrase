@@ -268,7 +268,7 @@ class Randomness {
 
 				// Discard numbers > doctionary size and words longer than the max word length
 				if ($n < self::$dictLen && strlen(self::$dict[$n]) <= $maxWordLen)
-					$words[] = mb_convert_case(self::$dict[$n], MB_CASE_TITLE);
+					$words[] = ucwords(strtolower(self::$dict[$n]));
 
 				if (count($words) >= $length)
 					break 2;
