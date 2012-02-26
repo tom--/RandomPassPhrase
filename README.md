@@ -18,5 +18,5 @@ The web service has the following API   `(range) [default]`
 - `@param int pl`   Minimum number of ascii characters in phrase `(6..99) [14]`
 - `@param string fm`   Response format `(html|text|json) [html]`
 
-The special characters are only there to placate password strength estimating algorithms. They
-are chosen using `mt_rand()` which is not really random.
+The special characters and digits are only there to placate password strength estimating algorithms.
+They are chosen using `mt_rand()` which is not really random.
