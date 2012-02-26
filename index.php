@@ -54,7 +54,7 @@ if (strtolower($format) === 'text') {
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-	<title>Pandom PassPhrase</title>
+	<title>Random PassPhrase</title>
 	<style type="text/css" media="all">
 		body {
 			font-family: "Segoe UI", Calibri, Tahoma, "Arial Narrow", "Lucida Grande", "DejaVu Sans Condensed", "Helvetica Narrow", Verdana, Arial, sans-serif
