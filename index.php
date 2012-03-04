@@ -21,10 +21,10 @@ $minPhraseLen = isset($_GET['pl']) && preg_match('%^\d{1,2}$%', $_GET['pl'])
 $format = isset($_GET['fm']) && preg_match('%^(html|text|json)$%i', $_GET['fm'])
 	? $_GET['fm']
 	: 'html';
-require './Randomness.php';
+require './PassPhrase.php';
 $phrases = array();
 for ($i = 0; $i < $nPhrases; ++$i)
-	$phrases[] = Randomness::randomPassPhrase(
+	$phrases[] = PassPhrase::randomPassPhrase(
 		$nWords, $maxWordLen, $nSpecials, $nDigits, $minPhraseLen, true
 	);
 
@@ -48,9 +48,7 @@ if (strtolower($format) === 'text') {
 	exit;
 }
 
-?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
