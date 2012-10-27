@@ -1,0 +1,112 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]--> <!--[if IE 7 ]>    <html lang="en" class="ie7"> <![endif]--> <!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]--> <!--[if IE 9 ]>    <html lang="en" class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <!-- <link rel="stylesheet" href="css/style.css?v=2"> -->
+
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+
+  <script src="javascripts/modernizr.foundation.js"></script>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <script type="text/x-handlebars" data-template-name="application">
+    <div class="row">
+      <div class="twelve columns">
+        <h1>Random Pass-phrase</h1>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="eight columns">
+        <h3>Phrase parameters</h3>
+        <form>
+          <div class="row">
+            <div class="six columns">
+              <label class="right inline">Number of words in phrase</label>
+            </div>
+            <div class="six columns">
+              {{view Ember.Select contentBinding="App.phrase.ranges.nw" selectionBinding="App.phrase.spec.nw" class="two"}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="six columns">
+              <label class="right inline">Max letters per word</label>
+            </div>
+            <div class="six columns">
+              {{view Ember.Select contentBinding="App.phrase.ranges.wl" selectionBinding="App.phrase.spec.wl" class="two"}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="six columns">
+              <label class="right inline">Number of special characters inserted</label>
+            </div>
+            <div class="six columns">
+              {{view Ember.Select contentBinding="App.phrase.ranges.ns" selectionBinding="App.phrase.spec.ns" class="two"}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="six columns">
+              <label class="right inline">Number of digits appended</label>
+            </div>
+            <div class="six columns">
+              {{view Ember.Select contentBinding="App.phrase.ranges.nd" selectionBinding="App.phrase.spec.nd" class="two"}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="six columns">
+              <label class="right inline">Minimum latters in phrase</label>
+            </div>
+            <div class="six columns">
+              {{view Ember.Select contentBinding="App.phrase.ranges.pl" selectionBinding="App.phrase.spec.pl" class="two"}}
+            </div>
+          </div>
+        </form>
+
+        <p><a class="button" href="#">New phrase</a></p>
+
+        {{outlet}}
+      </div>
+
+      <div class="four columns">
+        <h4>Side bar</h4>
+        <p>Were stoked you want to try Foundation! To get going, this file (index.html) includes some basic styles you can modify, play around with, or totally destroy to get going.</p>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="phrase">
+    <form>
+    {{view Ember.TextField valueBinding="value"}}
+    </form>        
+  </script>
+
+
+
+  <!-- The missing protocol means that it will match the current protocol, either http or https. If running locally, we use the local jQuery. -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="javascripts/libs/jquery-1.7.2.min.js"><\/script>')</script>
+  <script src="javascripts/libs/handlebars-1.0.0.beta.6.js"></script>
+  <script src="javascripts/libs/ember-1.0.0-pre.2.min.js"></script>
+  <script src="javascripts/foundation.min.js"></script>
+  <script src="javascripts/foundation-init.js"></script>
+  <script src="javascripts/phrase.js"></script>
+</body>
+</html>
