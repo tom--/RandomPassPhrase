@@ -40,11 +40,12 @@ class Randomness {
 	}
 
 	public static function warn($msg) {
-		if (class_exists('Yii'))
-			/** @noinspection PhpUndefinedClassInspection */
-			Yii::log($msg, 'warning', 'security');
-		else
-			error_log($msg);
+		if (class_exists('Yii')) {
+            /** @noinspection PhpUndefinedClassInspection */
+            Yii::log($msg, 'warning', 'security');
+        } else {
+            error_log($msg);
+        }
 	}
 
 	/**
@@ -57,8 +58,9 @@ class Randomness {
 	 * @return string of 64 pseudo random bytes
 	 */
 	public static function pseudoRanBlock($warn = true) {
-		if ($warn)
-			self::warn('Using ' . get_class() . '::pseudoRanBlock non-ctypto_strong bytes');
+		if ($warn) {
+            self::warn('Using ' . get_class() . '::pseudoRanBlock non-ctypto_strong bytes');
+        }
 
 		/**
 		 * @var array Keeps each pseudo-random datum found as a string
@@ -71,13 +73,13 @@ class Randomness {
 
 		// On unixy sustems the numerical values in ps, uptime and iostat ought to be fairly
 		// unpredictable. Gather the non-zero digits from those
-		/*foreach (array('ps', 'uptime', 'iostat') as $cmd) {
+		foreach (array('ps', 'uptime', 'iostat') as $cmd) {
 			@exec($cmd, $s, $ret);
 			if (is_array($s) && $s && $ret === 0)
 				foreach ($s as $v)
 					if (false !== preg_match_all('/[1-9]+/', $v, $m) && isset($m[0]))
 						$r[] = implode('', $m[0]);
-		}*/
+		}
 
 		// Gather the current time's microsecond part. Note: this is only a source of entropy on
 		// the first call! If multiple calls are made, the entropy is only as much as the
@@ -190,6 +192,36 @@ class Randomness {
 		return self::substr($s, 0, $length);
 	}
 
+    private $entropy = '';
+
+    public function bufferedBytes($n, $cryptoStrong = true) {
+        if (self::strlen($this->entropy) < $n) {
+            $this->entropy .= self::randomBytes(64, $cryptoStrong);
+        }
+        $return = self::substr($this->entropy, 0, $n);
+        $this->entropy = self::substr($this->entropy, $n);
+        return $return;
+    }
+
+    public function randInt($max, $cryptoStrong = true) {
+        if (!is_integer($max) || $max < 1 || $max > 2147483647) {
+            throw new Exception(__CLASS__ . '::' . __METHOD__ . ' param no good');
+        }
+        $nBits = ceil(log($max, 2));
+        $bBytes = ceil($nBits / 8);
+        $mask = pow(2, $nBits);
+        $i = 0;
+        do {
+            $ranString = str_pad($this->bufferedBytes($bBytes, $cryptoStrong), 4, chr(0));
+            $n = end(unpack('L', $ranString)) % $mask;
+            $i += 1;
+            if ($i > 999) {
+                throw new Exception(__CLASS__ . '::' . __METHOD__ . ' failed to generate number in range');
+            }
+        } while ($n > $max);
+        return $n;
+    }
+
 	/**
 	 * Generate a random Blowfish salt for use in PHP's crypt().
 	 *
@@ -197,7 +229,7 @@ class Randomness {
 	 * @param bool $cryptoStrong set to require crytoStrong randomness
 	 * @return string salt starting $2a$
 	 */
-	public static function blowfishSalt($cost = 10, $cryptoStrong = true) {
+	public static function blowfishSalt($cost = 10, $cryptoStrong = false) {
 		return
 			'$2a$' . str_pad($cost, 2, '0', STR_PAD_RIGHT) . '$'
 			. strtr(
@@ -225,3 +257,4 @@ class Randomness {
 	}
 
 }
+
