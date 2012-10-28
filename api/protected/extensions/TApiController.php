@@ -8,12 +8,13 @@ class TApiController extends CController {
 
     public $defaultAction = 'Posts';
 
-    static public function humanHttpStatus($statusCode) {
+    public static function humanHttpStatus($statusCode)
+    {
         switch ($statusCode) {
-	        case 200: return 'OK';
-	        case 404: return 'Not Found';
-	        case 403: return 'Forbidden';
-	        case 400: return 'Bad Request';
+            case 200: return 'OK';
+            case 404: return 'Not Found';
+            case 403: return 'Forbidden';
+            case 400: return 'Bad Request';
             case 500: return 'Internal Server Error';
             case 501: return 'Not Implemented';
             case 503: return 'Service Unavailable';
@@ -26,7 +27,8 @@ class TApiController extends CController {
      *
      * @param string $class
      */
-    protected function constructQuery($class = null) {
+    protected function constructQuery($class = null)
+    {
         $action = $this->action->getId();
         if ($class === null) {
             $class = ucfirst($action) . 'Query';
@@ -38,7 +40,8 @@ class TApiController extends CController {
     /**
      * Run the current HTTP request as an API query
      */
-    protected function doRequest() {
+    protected function doRequest()
+    {
         $beginTime = microtime(true);
         $this->query->verb = strtoupper($_SERVER['REQUEST_METHOD']);
 
@@ -67,7 +70,9 @@ class TApiController extends CController {
                 array_unshift($this->query->messages, $status);
                 if (substr($this->query->error, 0, 1) === '4') {
                     $this->query->messages[] = $this->query->seeLink(
-                        null, array('docs' => 1), 'for this method\'s documentation.'
+                        null,
+                        array('docs' => 1),
+                        'for this method\'s documentation.'
                     );
                 }
                 $this->query->error = true;
@@ -80,10 +85,10 @@ class TApiController extends CController {
         if ($this->query->nResults) {
             $log[] = 'nR=' . $this->query->nResults;
         }
-        $log[] = 'St=' . sprintf('%4.2fms', 1000*(microtime(true) - $beginTime));
+        $log[] = 'St=' . sprintf('%4.2fms', 1000 * (microtime(true) - $beginTime));
         Yii::log(implode(' ', $log), 'trace', 'api');
 
-        $this->query->serverTime = sprintf('%4.2fms', 1000*(microtime(true) - $beginTime));
+        $this->query->serverTime = sprintf('%4.2fms', 1000 * (microtime(true) - $beginTime));
 
         header('Content-type: application/json');
         echo json_encode($this->query);
@@ -95,7 +100,7 @@ class TApiController extends CController {
      * Sets cache control headers in the case of sucessful query. Inheriting classes may
      * override this method.
      */
-    protected function setCacheing() {
+    protected function setCacheing()
+    {
     }
-
 }

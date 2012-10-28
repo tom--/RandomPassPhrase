@@ -29,8 +29,13 @@
 			url: 'api',
 			data: data,
 			dataType: 'JSON',
+			/**
+			 * @param {Object} response The API response object. See api/?docs=1
+			 * @param {String[]} response.results List of pass-phrases
+			 */
 			success: function (response) {
 				console.log(response);
+				//noinspection JSUnresolvedVariable
 				App.phrase.set('value', response.results[0]);
 			}
 		});

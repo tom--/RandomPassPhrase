@@ -20,7 +20,8 @@ class PhraseQuery extends TApiQuery
     public $nd = 1;
     private $generator;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->generator = new PassPhrase;
     }
 
@@ -63,4 +64,3 @@ class PhraseQuery extends TApiQuery
         }
     }
 }
-

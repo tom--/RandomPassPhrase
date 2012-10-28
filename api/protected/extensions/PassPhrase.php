@@ -113,4 +113,3 @@ class PassPhrase
         return $phrase;
     }
 }
-

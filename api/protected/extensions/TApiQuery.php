@@ -12,7 +12,8 @@
  * @property mixed $schema Formal spec. of data structure and types in {@field results}
  * @property mixed $results Query results, structured as given in {@field schema}
  */
-abstract class TApiQuery extends CModel {
+abstract class TApiQuery extends CModel
+{
     public $verb;
     public $method;
     public $limit;
@@ -25,7 +26,8 @@ abstract class TApiQuery extends CModel {
 
     protected $_summary;
 
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return array(
             'verb' => 'HTTP request method',
             'method' => 'API method',
@@ -40,17 +42,20 @@ abstract class TApiQuery extends CModel {
         );
     }
 
-    public function attributeNames() {
+    public function attributeNames()
+    {
         return array_keys($this->attributeLabels());
     }
 
-    public function rules() {
+    public function rules()
+    {
         return array(
             array(''),
         );
     }
 
-    public function doInputs() {
+    public function doInputs()
+    {
         if (!$this->validate(array('verb'), false)) {
             return false;
         }
@@ -85,7 +90,8 @@ abstract class TApiQuery extends CModel {
      *
      * @return string
      */
-    public function getSummary() {
+    public function getSummary()
+    {
         if (!$this->_summary && $this->safeAttributeNames) {
             $params = array();
             foreach ($this->safeAttributeNames as $attr) {
@@ -103,7 +109,8 @@ abstract class TApiQuery extends CModel {
     /**
      * Write documentation for the requested method into $this->messages.
      */
-    public function selfDocument() {
+    public function selfDocument()
+    {
 
         // Get the class docblock lines from $this's class.
         $r = new ReflectionClass($this);
@@ -111,7 +118,8 @@ abstract class TApiQuery extends CModel {
 
         // Append the class docblock lines from this class.
         $r = new ReflectionClass(get_class());
-        $lines = array_merge($lines,
+        $lines = array_merge(
+            $lines,
             preg_split('{\R}', trim(substr($r->getDocComment(), 3, -2)))
         );
 
@@ -146,7 +154,9 @@ abstract class TApiQuery extends CModel {
             // assumed to be just a method name at the same location as the current request.
             if (preg_match('{@link \h+ (\S+) (?:\h*)(\S.*)? $}x', $line, $matches)) {
                 $line = $this->seeLink(
-                    $matches[1], null, isset($matches[2]) ? $matches[2] : null
+                    $matches[1],
+                    null,
+                    isset($matches[2]) ? $matches[2] : null
                 );
             }
         }
@@ -181,7 +191,8 @@ abstract class TApiQuery extends CModel {
      * @param string $text
      * @return string
      */
-    public function seeLink($url = null, $params = array(), $text = '') {
+    public function seeLink($url = null, $params = array(), $text = '')
+    {
         if (!preg_match('{^(?:https?)?//}', $url)) {
             $app = Yii::app();
             if ($url === null) {
@@ -199,4 +210,3 @@ abstract class TApiQuery extends CModel {
         return trim("@see $url $text");
     }
 }
-
