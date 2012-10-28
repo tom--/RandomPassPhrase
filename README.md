@@ -10,7 +10,7 @@ Random numbers used are "crypto-secure". Read the code to discover what this rea
 
 The backend web service has an API docuemtned at:
 
- * /api/?docs=1
+ * /api/index.php?docs=1
 
 The special characters and digits are only there to placate password strength estimating algorithms.
 They are chosen using `mt_rand()` which is not really random.
