@@ -23,6 +23,9 @@ class PassPhrase
      */
     protected $specials;
 
+    /**
+     * @param bool $cryptoStrong Set to use Randomness' crypto-strong option.
+     */
     public function __construct($cryptoStrong = true)
     {
         self::initDict();
@@ -31,6 +34,9 @@ class PassPhrase
         $this->specials = str_split('~!@#$%^&-_+=|;:.');
     }
 
+    /**
+     * Initialize the dictionary of words.
+     */
     public static function initDict()
     {
         if (self::$dict === null) {
@@ -58,7 +64,6 @@ class PassPhrase
      * @param int $nSpecials Number of non-alphanumeric ascii chars to add
      * @param int $nDigits Number of digit chars to add
      *
-     * @internal param int $maxWordLen Max length of each word
      * @return string The random pass phrase
      */
     public function randomPassPhrase(
